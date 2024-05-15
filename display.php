@@ -1,11 +1,6 @@
 <?php
 include "./function.php";
 
- if (empty($_SESSION)) {
-    $location = "index.php";
-    header("Location: $location");
-    exit; 
- }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,7 +19,7 @@ include "./function.php";
         <center>
             <?php if (!empty($_SESSION['success'])) { ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <strong>SUCCESS</strong> <?=$_SESSION['success']?>
+                    <strong>SUCCESS</strong> <?= $_SESSION['success'] ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php } ?>
@@ -46,21 +41,28 @@ include "./function.php";
                                         <th>email</th>
                                         <th>created at</th>
                                         <th>Date of birth</th>
-                                        <th>password</th>
                                         <th>Check</th>
-                                        <th>Encrypted</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td><?= $_SESSION['user_name'] ?? "" ?></td>
-                                        <td><?= $_SESSION['email'] ?? "" ?></td>
-                                        <td><?= $_SESSION['datetime'] ?? "" ?></td>
-                                        <td><?= date("Y-M-d",strtotime($_SESSION['dob']))  ?? "" ?></td>
-                                        <td><?= $_SESSION['password'] ?? "" ?></td>
-                                        <td><?= $_SESSION['checkbox']  ?? "NO" ?></td>
-                                        <td><?= $_SESSION['encrypted'] ?? "" ?></td>
-                                    </tr>
+                                    <?php
+                                    $sql = "SELECT * FROM users ORDER BY id DESC";
+
+                                    $result = $db_conn->query($sql);
+                                    if ($result) {
+
+                                        while ($data = mysqli_fetch_object($result)) {
+
+                                    ?>
+                                            <tr>
+                                                <td><?= $data->user_name ?></td>
+                                                <td><?= $data->email ?></td>
+                                                <td><?= $data->created_at ?></td>
+                                                <td><?= $data->dob ?></td>
+                                                <td><?= $data->chk ?></td>
+                                            </tr>
+                                    <?php }
+                                    } ?>
                                 </tbody>
                             </table>
                         </div>
@@ -76,4 +78,3 @@ include "./function.php";
 </body>
 
 </html>
-

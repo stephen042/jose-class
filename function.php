@@ -1,4 +1,5 @@
 <?php
+@include "config.php";
 session_start();
 
 function test_input($data)
@@ -38,25 +39,25 @@ if (isset($_POST["simple_form"])) {
     // validation
     if (empty($userName)) {
         $erroruserName = "Please fill the input fields";
-    }elseif (!preg_match("/^[a-zA-Z-' ]*$/",$erroruserName)) {
+    } elseif (!preg_match("/^[a-zA-Z-' ]*$/", $erroruserName)) {
         $erroruserName = "Only letters and white space allowed";
     }
 
     if (empty($email)) {
         $errorEmail = "Please fill the input fields";
-    }elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errorEmail = "Invalid email format";
     }
 
     if (empty($password)) {
         $errorPassword = "Please fill the input fields";
-    }elseif(strlen($password) < 6) {
+    } elseif (strlen($password) < 6) {
         $errorPassword = "Password should be at least 6 characters";
     }
 
     if (empty($confirmPassword)) {
         $errorPasswordConfirm = "Please fill the input fields";
-    }elseif($password !== $confirmPassword){
+    } elseif ($password !== $confirmPassword) {
         $errorPasswordConfirm = "Password mismatch";
     }
 
@@ -67,17 +68,19 @@ if (isset($_POST["simple_form"])) {
     if (empty($erroruserName) && empty($errorEmail) && empty($errorPassword) && empty($errorPasswordConfirm) && empty($errordob)) {
         $location = "display.php";
 
-        $_SESSION['user_name'] = $userName;
-        $_SESSION['email'] = $email;
-        $_SESSION['password'] = $password;
-        $_SESSION['encrypted'] = $encrypted;
-        $_SESSION['checkbox'] = $checkbox;
-        $_SESSION['success'] = "Form Submitted successfully";
-        $_SESSION['datetime'] = date('Y-M-d h:i a');
-        $_SESSION['dob'] = $dob;
+        $sql = "INSERT INTO users (user_name, email, password, dob, chk) VALUES ('$userName','$email',' $encrypted', '$dob','$checkbox')";
 
+        if ($db_conn->query($sql)) {
 
-        header("Location: $location");
-        exit; 
+            $_SESSION['success'] = "User created successfully";
+
+            header("Location: $location");
+            exit;
+        }
+
+        $_SESSION['error'] = "An error occurred";
+
+        header("Location: index.php");
+        exit;
     }
 }
